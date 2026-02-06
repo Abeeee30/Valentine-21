@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VTFL 💖</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap');
+
+body {
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 28px;
+    max-width: 520px;
+    margin: 160px auto 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 2;
+}
+
+button {
+    margin: 10px;
+    padding: 14px 26px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    background: #ff4d6d;
+    color: white;
+}
+
+#noBtn { position: absolute; }
+#response { margin-top: 15px; min-height: 40px; }
+
+.drum {
+    font-size: 34px;
+    animation: drum 0.4s infinite;
+}
+@keyframes drum {
+    50% { transform: rotate(5deg); }
+}
+
+/* FALLING HEARTS/FLOWERS */
+.fall {
+    position: fixed;
+    top: -50px;
+    font-size: 24px;
+    animation: fall 5s linear infinite;
+}
+@keyframes fall {
+    to { transform: translateY(110vh); opacity: 0; }
+}
+
+/* SWANS */
+.swan-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 120px;
+    z-index: 1;
+}
+.swan {
+    width: 80px;
+    animation: float 6s ease-in-out infinite;
+}
+.left { transform: scaleX(-1); }
+@keyframes float {
+    50% { transform: translateY(-12px); }
+}
+
+/* VTFL */
+.vtfl {
+    position: fixed;
+    top: 105px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 3px;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* NAME */
+.name-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+/* KISS ANIMATION */
+.kiss-wrapper {
+    position: relative;
+    width: 220px;
+    height: 140px;
+    margin: 20px auto 0;
+    z-index: 2;
+}
+.kiss-img {
+    width: 90px;
+    position: absolute;
+    bottom: 0;
+}
+.kiss-left {
+    left: 0;
+    animation: kissLeft 1.5s ease-in-out infinite alternate;
+}
+.kiss-right {
+    right: 0;
+    animation: kissRight 1.5s ease-in-out infinite alternate;
+}
+@keyframes kissLeft {
+    0% { transform: translateX(0) rotate(0deg); }
+    100% { transform: translateX(60px) rotate(5deg); }
+}
+@keyframes kissRight {
+    0% { transform: translateX(0) rotate(0deg); }
+    100% { transform: translateX(-60px) rotate(-5deg); }
+}
+
+/* SPARKLES */
+.sparkle {
+  position: absolute;
+  font-size: 16px;
+  color: #fff;
+  animation: sparkleAnim 2s linear infinite;
+  pointer-events: none;
+  opacity: 0.9;
+}
+@keyframes sparkleAnim {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(0,-60px) scale(0.5); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MUSIC -->
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_8c9e6f4a4b.mp3">
+</audio>
+
+<audio id="loveSong">
+  <source src="if-the-world-was-ending.mp3">
+</audio>
+
+<!-- SWANS -->
+<div class="swan-wrapper">
+    <img src="https://gallery.yopriceville.com/var/albums/Free-Clipart-Pictures/Birds-PNG/Swan_Transparent_PNG_Clip_Art_Image.png?m=1629783085" class="swan left">
+    <img src="https://gallery.yopriceville.com/var/albums/Free-Clipart-Pictures/Birds-PNG/Swan_Transparent_PNG_Clip_Art_Image.png?m=1629783085" class="swan">
+</div>
+<div class="vtfl">VTFL</div>
+
+<div class="card" id="app"></div>
+
+<script>
+let page = 0;
+const app = document.getElementById("app");
+const music = document.getElementById("bgMusic");
+const loveSong = document.getElementById("loveSong");
+
+// Store selections
+let answers = { love:"", us:"", spicy:"", cheesy:"" };
+
+music.volume = 0.4;
+
+// Mobile autoplay
+document.body.addEventListener("click", () => {
+    if (music.paused) music.play();
+}, { once:true });
+
+function fadeOutMusic() {
+    let f = setInterval(() => {
+        if (music.volume > 0.05) music.volume -= 0.05;
+        else { music.pause(); clearInterval(f); }
+    }, 200);
+}
+
+function nextPage(){ page++; render(); }
+
+function respond(text, type, value){
+    answers[type] = value;
+    document.getElementById("response").innerText = text;
+    setTimeout(nextPage, 1400);
+}
+
+function moveNo(btn){
+    btn.style.left = Math.random()*70+"vw";
+    btn.style.top = Math.random()*70+"vh";
+}
+
+function loveRain(emoji="💖"){
+    setInterval(()=>{
+        const e=document.createElement("div");
+        e.className="fall";
+        e.innerText=emoji;
+        e.style.left=Math.random()*100+"vw";
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),6000);
+    },150);
+}
+
+function sparkleEffect(){
+  const wrapper = document.querySelector('.kiss-wrapper');
+  if(!wrapper) return;
+  setInterval(()=>{
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = Math.random()*150 + 'px';
+    s.style.top = Math.random()*50 + 'px';
+    s.innerText = '✨';
+    wrapper.appendChild(s);
+    setTimeout(()=>s.remove(),2000);
+  }, 250);
+}
+
+function acceptLove(){
+    loveRain();
+    loveSong.volume = 0.8;
+    loveSong.play();
+
+    let loveLine = "Every choice you made felt like us.";
+    if (answers.love === "butterflies") loveLine = "You chose butterflies — and you give me those every time.";
+    if (answers.love === "safe") loveLine = "You chose safe and warm — and that’s exactly how you feel to me.";
+    if (answers.love === "chaos") loveLine = "You chose sweet chaos — and somehow, it’s perfect with you.";
+
+    let spicyLine = "";
+    if (answers.spicy === "kisses") spicyLine = "And maybe… I’m already imagining those slow kisses 😌";
+    if (answers.spicy === "cuddles") spicyLine = "And I’m definitely ready for those late-night cuddles 💞";
+    if (answers.spicy === "whispers") spicyLine = "And those quiet whispers? They’re my favorite kind of trouble 😏";
+
+    let cheesyLine = "";
+    if (answers.cheesy === "notif") cheesyLine = "My heart does a happy dance every time you smile 💃❤️";
+    if (answers.cheesy === "stars") cheesyLine = "Meeting you was like finding the missing piece of my puzzle 🧩✨";
+
+    app.innerHTML = `
+        <h1>And just like that…</h1>
+        <p style="font-size:18px;">
+        ${loveLine}<br><br>
+        ${spicyLine}<br><br>
+        ${cheesyLine}<br><br>
+        Two hearts, one moment, one beautiful yes 💕
+        </p>
+    `;
+}
+
+function render(){
+if(page===0){
+app.innerHTML=`
+<h1>Hey 💕</h1>
+<p>This little surprise is just for you.</p>
+<button onclick="nextPage()">Start 💖</button>`;
+}
+
+else if(page===1){
+app.innerHTML=`
+<h2>What does love feel like?</h2>
+<button onclick="respond('That’s beautiful 🥰','love','butterflies')">Butterflies 🦋</button>
+<button onclick="respond('That feels like home 🤍','love','safe')">Safe & warm</button>
+<button onclick="respond('You’re adorable 😆','love','chaos')">Sweet chaos</button>
+<div id="response"></div>`;
+}
+
+else if(page===2){
+app.innerHTML=`
+<h2>What makes us special?</h2>
+<button onclick="respond('Our bond is rare ✨','us','connection')">Our connection</button>
+<button onclick="respond('You light up my world 😳','us','feeling')">How you make me feel</button>
+<button onclick="respond('Okay now I’m emotional 🥹','us','everything')">Everything</button>
+<div id="response"></div>`;
+}
+
+else if(page===3){
+app.innerHTML=`
+<h2>One last question… just between us 😌</h2>
+<p style="margin-bottom:10px;">Which moment feels the most irresistible?</p>
+<button onclick="respond('Dangerously romantic 😏','spicy','kisses')">Slow kisses 💋</button>
+<button onclick="respond('That’s comfort & desire 😈','spicy','cuddles')">Late-night cuddles 🛌</button>
+<button onclick="respond('Heart officially stolen 😳','spicy','whispers')">Soft whispers 🔥</button>
+<div id="response"></div>`;
+}
+
+else if(page===4){
+app.innerHTML=`
+<h2>Wait a minute…</h2>
+<p>I forgot to tell you one more thing!</p>
+<button onclick="respond('My heart does a happy dance every time you smile 💃❤️','cheesy','notif')">Cheesy Line 1</button>
+<button onclick="respond('Meeting you was like finding the missing piece of my puzzle 🧩✨','cheesy','stars')">Cheesy Line 2</button>
+<div id="response"></div>`;
+}
+
+else if(page===5){
+loveRain("🌸"); // flowers falling
+app.innerHTML=`
+<h2>I deleted Google the day I met you…</h2>
+<p>…because the search was over ❤️</p>
+<button onclick="nextPage()">Continue 💕</button>`;
+}
+
+else if(page===6){
+fadeOutMusic();
+app.innerHTML=`
+<div class="name-title">KINU</div>
+<h1 class="drum">🥁🥁🥁</h1>
+<h1>Will you be my Valentine? 💘</h1>
+
+<div class="kiss-wrapper">
+    <img src="https://i.postimg.cc/Y2zF12mn/dodo.png" class="kiss-img kiss-left">
+    <img src="https://i.postimg.cc/t42Nxqhz/jojo.png" class="kiss-img kiss-right">
+</div>
+
+<button onclick="acceptLove()">YES 💕</button>
+<button id="noBtn" onmouseover="moveNo(this)">NO 😢</button>`;
+
+setTimeout(sparkleEffect, 500);
+}
+}
+render();
+</script>
+
+</body>
+</html>
